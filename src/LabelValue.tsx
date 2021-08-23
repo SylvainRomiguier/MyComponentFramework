@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { createElement } from "./MyComponentFramework";
+import { h } from "./MyComponentFramework";
 
 interface LabelValueProps {
   label: string;

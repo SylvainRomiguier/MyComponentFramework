@@ -1,17 +1,10 @@
 import { Button } from "./Button";
 import { LabelValue } from "./LabelValue";
 import { v4 as uuid } from "uuid";
-import { createElement, Listener, useState } from "./MyComponentFramework";
+import { h, Listener, useState } from "./MyComponentFramework";
 import { AutoCounter } from "./AutoCounter";
 
-function App() {
-  const root = document.getElementById("root");
-  if (root) {
-    root.appendChild(Container());
-  }
-}
-
-const Container = () => (
+export const Container = () => (
   <div style="display: flex; flex-direction: column; width: 325px; margin-left: auto; margin-right: auto; height: 500px; border: 1px solid grey; border-radius: 15px; padding: 20px;">
     <AutoCounter />
     <CountAndFruit />
@@ -81,5 +74,3 @@ const CountAndFruit = () => {
 
   return render(initialValues);
 };
-
-const app = App();

@@ -1,4 +1,4 @@
-import { createElement, Listener, useState } from "./MyComponentFramework";
+import { h, Listener, useState } from "./MyComponentFramework";
 import { v4 as uuid } from "uuid";
 import { LabelValue } from "./LabelValue";
 

@@ -1,6 +1,19 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const MyComponentFramework_1 = require("./MyComponentFramework");
+const Main_1 = require("./Main");
+function App() {
+    const root = document.getElementById("root");
+    if (root) {
+        MyComponentFramework_1.render(Main_1.Container(), root);
+    }
+}
+const app = App();
+
+},{"./Main":5,"./MyComponentFramework":6}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutoCounter = void 0;
 const MyComponentFramework_1 = require("./MyComponentFramework");
 const uuid_1 = require("uuid");
@@ -9,8 +22,8 @@ const initialValue = 0;
 const AutoCounter = () => {
     const guid = uuid_1.v4();
     const render = (newState) => {
-        const rendered = (MyComponentFramework_1.createElement("div", { id: guid },
-            MyComponentFramework_1.createElement(LabelValue_1.LabelValue, { label: "auto-counter", value: newState.toString() })));
+        const rendered = (MyComponentFramework_1.h("div", { id: guid },
+            MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "auto-counter", value: newState.toString() })));
         setTimeout(() => setState(newState + 1), 1000);
         const previousRendered = document.getElementById(guid);
         if (previousRendered) {
@@ -25,7 +38,7 @@ const AutoCounter = () => {
 };
 exports.AutoCounter = AutoCounter;
 
-},{"./LabelValue":3,"./MyComponentFramework":5,"uuid":6}],2:[function(require,module,exports){
+},{"./LabelValue":4,"./MyComponentFramework":6,"uuid":7}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Button = void 0;
@@ -33,11 +46,11 @@ const uuid_1 = require("uuid");
 const MyComponentFramework_1 = require("./MyComponentFramework");
 const Button = ({ label, onClick }) => {
     const guid = uuid_1.v4();
-    return MyComponentFramework_1.createElement("button", { id: guid, onClick: onClick, style: "cursor: pointer;" }, label);
+    return MyComponentFramework_1.h("button", { id: guid, onClick: onClick, style: "cursor: pointer;" }, label);
 };
 exports.Button = Button;
 
-},{"./MyComponentFramework":5,"uuid":6}],3:[function(require,module,exports){
+},{"./MyComponentFramework":6,"uuid":7}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LabelValue = void 0;
@@ -45,31 +58,27 @@ const uuid_1 = require("uuid");
 const MyComponentFramework_1 = require("./MyComponentFramework");
 const LabelValue = ({ label, value }) => {
     const guid = uuid_1.v4();
-    return (MyComponentFramework_1.createElement("div", { id: guid, style: "display: flex;" },
-        MyComponentFramework_1.createElement("div", { style: "font-weight: bold; margin-right: 5px;" },
+    return (MyComponentFramework_1.h("div", { id: guid, style: "display: flex;" },
+        MyComponentFramework_1.h("div", { style: "font-weight: bold; margin-right: 5px;" },
             label,
             "\u00A0:"),
-        MyComponentFramework_1.createElement("div", null, value)));
+        MyComponentFramework_1.h("div", null, value)));
 };
 exports.LabelValue = LabelValue;
 
-},{"./MyComponentFramework":5,"uuid":6}],4:[function(require,module,exports){
+},{"./MyComponentFramework":6,"uuid":7}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Container = void 0;
 const Button_1 = require("./Button");
 const LabelValue_1 = require("./LabelValue");
 const uuid_1 = require("uuid");
 const MyComponentFramework_1 = require("./MyComponentFramework");
 const AutoCounter_1 = require("./AutoCounter");
-function App() {
-    const root = document.getElementById("root");
-    if (root) {
-        root.appendChild(Container());
-    }
-}
-const Container = () => (MyComponentFramework_1.createElement("div", { style: "display: flex; flex-direction: column; width: 325px; margin-left: auto; margin-right: auto; height: 500px; border: 1px solid grey; border-radius: 15px; padding: 20px;" },
-    MyComponentFramework_1.createElement(AutoCounter_1.AutoCounter, null),
-    MyComponentFramework_1.createElement(CountAndFruit, null)));
+const Container = () => (MyComponentFramework_1.h("div", { style: "display: flex; flex-direction: column; width: 325px; margin-left: auto; margin-right: auto; height: 500px; border: 1px solid grey; border-radius: 15px; padding: 20px;" },
+    MyComponentFramework_1.h(AutoCounter_1.AutoCounter, null),
+    MyComponentFramework_1.h(CountAndFruit, null)));
+exports.Container = Container;
 const initialValues = {
     count: 1,
     fruit: "Apple",
@@ -77,16 +86,16 @@ const initialValues = {
 const CountAndFruit = () => {
     const guid = uuid_1.v4();
     const render = (newState) => {
-        const rendered = (MyComponentFramework_1.createElement("div", { id: guid, style: "display: flex; flex-direction: column;" },
-            MyComponentFramework_1.createElement(LabelValue_1.LabelValue, { label: "Count", value: newState.count.toString() }),
-            MyComponentFramework_1.createElement("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
-                MyComponentFramework_1.createElement(Button_1.Button, { label: "Increase amount", onClick: () => clickAdd(newState) }),
-                MyComponentFramework_1.createElement(Button_1.Button, { label: "Decrease amount", onClick: () => clickSub(newState) })),
-            MyComponentFramework_1.createElement(LabelValue_1.LabelValue, { label: "Fruit", value: newState.fruit }),
-            MyComponentFramework_1.createElement("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
-                MyComponentFramework_1.createElement(Button_1.Button, { label: "Set Apple", onClick: () => setFruit(newState, "Apple") }),
-                MyComponentFramework_1.createElement(Button_1.Button, { label: "Set Cherry", onClick: () => setFruit(newState, "Cherry") }),
-                MyComponentFramework_1.createElement(Button_1.Button, { label: "Set Pear", onClick: () => setFruit(newState, "Pear") }))));
+        const rendered = (MyComponentFramework_1.h("div", { id: guid, style: "display: flex; flex-direction: column;" },
+            MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "Count", value: newState.count.toString() }),
+            MyComponentFramework_1.h("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
+                MyComponentFramework_1.h(Button_1.Button, { label: "Increase amount", onClick: () => clickAdd(newState) }),
+                MyComponentFramework_1.h(Button_1.Button, { label: "Decrease amount", onClick: () => clickSub(newState) })),
+            MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "Fruit", value: newState.fruit }),
+            MyComponentFramework_1.h("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
+                MyComponentFramework_1.h(Button_1.Button, { label: "Set Apple", onClick: () => setFruit(newState, "Apple") }),
+                MyComponentFramework_1.h(Button_1.Button, { label: "Set Cherry", onClick: () => setFruit(newState, "Cherry") }),
+                MyComponentFramework_1.h(Button_1.Button, { label: "Set Pear", onClick: () => setFruit(newState, "Pear") }))));
         const previousRendered = document.getElementById(guid);
         if (previousRendered) {
             previousRendered.replaceWith(rendered);
@@ -107,12 +116,11 @@ const CountAndFruit = () => {
     };
     return render(initialValues);
 };
-const app = App();
 
-},{"./AutoCounter":1,"./Button":2,"./LabelValue":3,"./MyComponentFramework":5,"uuid":6}],5:[function(require,module,exports){
+},{"./AutoCounter":2,"./Button":3,"./LabelValue":4,"./MyComponentFramework":6,"uuid":7}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useState = exports.createElement = exports.createObserver = void 0;
+exports.render = exports.useState = exports.h = exports.createElement = exports.createObserver = void 0;
 function createObserver() {
     let listeners = [];
     return {
@@ -140,22 +148,75 @@ const appendChild = (parent, child) => {
         }
     }
 };
-const createElement = (tag, props, ...children) => {
-    if (typeof tag === "function")
-        return tag(props, children);
-    const element = document.createElement(tag);
-    Object.entries(props || {}).forEach(([name, value]) => {
-        if (name.startsWith("on") &&
-            name.toLowerCase() in window &&
-            typeof value === "function")
-            element.addEventListener(name.toLowerCase().substr(2), value);
-        else
-            element.setAttribute(name, value.toString());
-    });
-    appendChild(element, children);
+const createElement = (node) => {
+    if (typeof node === "string") {
+        return document.createTextNode(node);
+    }
+    const element = document.createElement(node.type);
+    node.children
+        .map(exports.createElement)
+        .forEach(element.appendChild.bind(element));
     return element;
 };
 exports.createElement = createElement;
+// const setProps = (target: HTMLElement, props: Props) => {
+//   Object.entries(props || {}).forEach(([name, value]) => {
+//     if (
+//       name.startsWith("on") &&
+//       name.toLowerCase() in window &&
+//       typeof value === "function"
+//     )
+//       target.addEventListener(name.toLowerCase().substr(2), value);
+//     else target.setAttribute(name, (value as number | string).toString());
+//   });
+// };
+const flatten = (arr) => [].concat.apply([], arr);
+const h = (type, props, ...children) => {
+    props = props || {};
+    if (typeof type === "function")
+        return type(props, flatten(children));
+    return { type, props, children: flatten(children) };
+};
+exports.h = h;
+const changed = (newNode, oldNode) => {
+    return true;
+};
+const diffProps = (newNode, oldNode) => { };
+const diffChildren = (newNode, oldNode) => { };
+const diff = (newNode, oldNode) => {
+    if (!oldNode) {
+        return { type: "CREATE", newNode };
+    }
+    if (!newNode) {
+        return { type: "REMOVE" };
+    }
+    if (changed(newNode, oldNode)) {
+        return { type: "REPLACE", newNode };
+    }
+    return { type: "UPDATE" };
+};
+const patch = (parent, patches, index = 0) => {
+    if (!patches) {
+        return;
+    }
+    const el = parent.childNodes[index];
+    switch (patches.type) {
+        case "CREATE": {
+            const { newNode } = patches;
+            const newEl = exports.createElement(newNode);
+            return parent.appendChild(newEl);
+        }
+        case "REMOVE": {
+            return parent.removeChild(el);
+        }
+        case "REPLACE": {
+        }
+        case "UPDATE": {
+        }
+        default:
+            throw new Error("Unknown patch type");
+    }
+};
 const useState = () => {
     const observer = createObserver();
     const subscribe = observer.subscribe;
@@ -165,8 +226,13 @@ const useState = () => {
     return [subscribe, setState];
 };
 exports.useState = useState;
+const render = (virtualNode, root) => {
+    console.log(virtualNode);
+    root.appendChild(exports.createElement(virtualNode));
+};
+exports.render = render;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -246,7 +312,7 @@ var _stringify = _interopRequireDefault(require("./stringify.js"));
 var _parse = _interopRequireDefault(require("./parse.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./nil.js":8,"./parse.js":9,"./stringify.js":13,"./v1.js":14,"./v3.js":15,"./v4.js":17,"./v5.js":18,"./validate.js":19,"./version.js":20}],7:[function(require,module,exports){
+},{"./nil.js":9,"./parse.js":10,"./stringify.js":14,"./v1.js":15,"./v3.js":16,"./v4.js":18,"./v5.js":19,"./validate.js":20,"./version.js":21}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -470,7 +536,7 @@ function md5ii(a, b, c, d, x, s, t) {
 
 var _default = md5;
 exports.default = _default;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -479,7 +545,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = '00000000-0000-0000-0000-000000000000';
 exports.default = _default;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -525,7 +591,7 @@ function parse(uuid) {
 
 var _default = parse;
 exports.default = _default;
-},{"./validate.js":19}],10:[function(require,module,exports){
+},{"./validate.js":20}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -534,7 +600,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
 exports.default = _default;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -561,7 +627,7 @@ function rng() {
 
   return getRandomValues(rnds8);
 }
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -666,7 +732,7 @@ function sha1(bytes) {
 
 var _default = sha1;
 exports.default = _default;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -706,7 +772,7 @@ function stringify(arr, offset = 0) {
 
 var _default = stringify;
 exports.default = _default;
-},{"./validate.js":19}],14:[function(require,module,exports){
+},{"./validate.js":20}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -814,7 +880,7 @@ function v1(options, buf, offset) {
 
 var _default = v1;
 exports.default = _default;
-},{"./rng.js":11,"./stringify.js":13}],15:[function(require,module,exports){
+},{"./rng.js":12,"./stringify.js":14}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -831,7 +897,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const v3 = (0, _v.default)('v3', 0x30, _md.default);
 var _default = v3;
 exports.default = _default;
-},{"./md5.js":7,"./v35.js":16}],16:[function(require,module,exports){
+},{"./md5.js":8,"./v35.js":17}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -910,7 +976,7 @@ function _default(name, version, hashfunc) {
   generateUUID.URL = URL;
   return generateUUID;
 }
-},{"./parse.js":9,"./stringify.js":13}],17:[function(require,module,exports){
+},{"./parse.js":10,"./stringify.js":14}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -948,7 +1014,7 @@ function v4(options, buf, offset) {
 
 var _default = v4;
 exports.default = _default;
-},{"./rng.js":11,"./stringify.js":13}],18:[function(require,module,exports){
+},{"./rng.js":12,"./stringify.js":14}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -965,7 +1031,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const v5 = (0, _v.default)('v5', 0x50, _sha.default);
 var _default = v5;
 exports.default = _default;
-},{"./sha1.js":12,"./v35.js":16}],19:[function(require,module,exports){
+},{"./sha1.js":13,"./v35.js":17}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -983,7 +1049,7 @@ function validate(uuid) {
 
 var _default = validate;
 exports.default = _default;
-},{"./regex.js":10}],20:[function(require,module,exports){
+},{"./regex.js":11}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1005,4 +1071,4 @@ function version(uuid) {
 
 var _default = version;
 exports.default = _default;
-},{"./validate.js":19}]},{},[4]);
+},{"./validate.js":20}]},{},[1]);
