@@ -1,29 +1,11 @@
-import { h, Listener, useState } from "./MyComponentFramework";
-import { v4 as uuid } from "uuid";
+import { h, MyStateHandler } from "./MyComponentFramework";
 import { LabelValue } from "./LabelValue";
 
-const initialValue = 0;
+let interval: number | null = null;
 
-export const AutoCounter = () => {
-  const guid = uuid();
-
-  const render: Listener<number> = (newState) => {
-    const rendered = (
-      <div id={guid}>
-        <LabelValue label="auto-counter" value={newState.toString()} />
-      </div>
-    );
-    setTimeout(() => setState(newState + 1), 1000);
-    const previousRendered = document.getElementById(guid);
-    if (previousRendered) {
-      previousRendered.replaceWith(rendered);
-      return;
-    }
-    return rendered;
-  };
-
-  const [subscribe, setState] = useState<number>();
-  subscribe(render);
-
-  return render(initialValue);
+export const AutoCounter = ({ count }: { count: number }) => {
+  const [getCount, setCount] = MyStateHandler.useState<number>(count);
+  if(interval) clearInterval(interval);
+  interval = setInterval(() => setCount(getCount() + 1), 1000);
+  return <LabelValue label="auto-counter" value={getCount().toString()} />;
 };

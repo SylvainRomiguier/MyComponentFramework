@@ -1,6 +1,7 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.App = void 0;
 const MyComponentFramework_1 = require("./MyComponentFramework");
 const Main_1 = require("./Main");
 function App() {
@@ -9,6 +10,7 @@ function App() {
         MyComponentFramework_1.render(Main_1.Container(), root);
     }
 }
+exports.App = App;
 const app = App();
 
 },{"./Main":5,"./MyComponentFramework":6}],2:[function(require,module,exports){
@@ -16,29 +18,18 @@ const app = App();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutoCounter = void 0;
 const MyComponentFramework_1 = require("./MyComponentFramework");
-const uuid_1 = require("uuid");
 const LabelValue_1 = require("./LabelValue");
-const initialValue = 0;
-const AutoCounter = () => {
-    const guid = uuid_1.v4();
-    const render = (newState) => {
-        const rendered = (MyComponentFramework_1.h("div", { id: guid },
-            MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "auto-counter", value: newState.toString() })));
-        setTimeout(() => setState(newState + 1), 1000);
-        const previousRendered = document.getElementById(guid);
-        if (previousRendered) {
-            previousRendered.replaceWith(rendered);
-            return;
-        }
-        return rendered;
-    };
-    const [subscribe, setState] = MyComponentFramework_1.useState();
-    subscribe(render);
-    return render(initialValue);
+let interval = null;
+const AutoCounter = ({ count }) => {
+    const [getCount, setCount] = MyComponentFramework_1.MyStateHandler.useState(count);
+    if (interval)
+        clearInterval(interval);
+    interval = setInterval(() => setCount(getCount() + 1), 1000);
+    return MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "auto-counter", value: getCount().toString() });
 };
 exports.AutoCounter = AutoCounter;
 
-},{"./LabelValue":4,"./MyComponentFramework":6,"uuid":7}],3:[function(require,module,exports){
+},{"./LabelValue":4,"./MyComponentFramework":6}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Button = void 0;
@@ -74,53 +65,42 @@ const Button_1 = require("./Button");
 const LabelValue_1 = require("./LabelValue");
 const uuid_1 = require("uuid");
 const MyComponentFramework_1 = require("./MyComponentFramework");
+const MyComponentFramework_2 = require("./MyComponentFramework");
 const AutoCounter_1 = require("./AutoCounter");
 const Container = () => (MyComponentFramework_1.h("div", { style: "display: flex; flex-direction: column; width: 325px; margin-left: auto; margin-right: auto; height: 500px; border: 1px solid grey; border-radius: 15px; padding: 20px;" },
-    MyComponentFramework_1.h(AutoCounter_1.AutoCounter, null),
-    MyComponentFramework_1.h(CountAndFruit, null)));
+    MyComponentFramework_1.h(AutoCounter_1.AutoCounter, { count: 10 }),
+    MyComponentFramework_1.h(CountAndFruit, { count: 1, fruit: "Apple" })));
 exports.Container = Container;
-const initialValues = {
-    count: 1,
-    fruit: "Apple",
-};
-const CountAndFruit = () => {
+const CountAndFruit = ({ count: _count, fruit: _fruit, }) => {
     const guid = uuid_1.v4();
-    const render = (newState) => {
-        const rendered = (MyComponentFramework_1.h("div", { id: guid, style: "display: flex; flex-direction: column;" },
-            MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "Count", value: newState.count.toString() }),
-            MyComponentFramework_1.h("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
-                MyComponentFramework_1.h(Button_1.Button, { label: "Increase amount", onClick: () => clickAdd(newState) }),
-                MyComponentFramework_1.h(Button_1.Button, { label: "Decrease amount", onClick: () => clickSub(newState) })),
-            MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "Fruit", value: newState.fruit }),
-            MyComponentFramework_1.h("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
-                MyComponentFramework_1.h(Button_1.Button, { label: "Set Apple", onClick: () => setFruit(newState, "Apple") }),
-                MyComponentFramework_1.h(Button_1.Button, { label: "Set Cherry", onClick: () => setFruit(newState, "Cherry") }),
-                MyComponentFramework_1.h(Button_1.Button, { label: "Set Pear", onClick: () => setFruit(newState, "Pear") }))));
-        const previousRendered = document.getElementById(guid);
-        if (previousRendered) {
-            previousRendered.replaceWith(rendered);
-            return;
-        }
-        return rendered;
+    const [getCount, setCount] = MyComponentFramework_2.MyStateHandler.useState(_count);
+    const [getFruit, setFruit] = MyComponentFramework_2.MyStateHandler.useState(_fruit);
+    console.log(getFruit());
+    const clickAdd = () => {
+        console.log("clickAdd");
+        setCount(getCount() + 1);
     };
-    const [subscribe, setState] = MyComponentFramework_1.useState();
-    subscribe(render);
-    const clickAdd = (newState) => {
-        setState(Object.assign(Object.assign({}, newState), { count: newState.count + 1 }));
+    const clickSub = () => {
+        console.log("clickSub");
+        setCount(getCount() - 1);
     };
-    const clickSub = (newState) => {
-        setState(Object.assign(Object.assign({}, newState), { count: newState.count - 1 }));
-    };
-    const setFruit = (newState, fruit) => {
-        setState(Object.assign(Object.assign({}, newState), { fruit }));
-    };
-    return render(initialValues);
+    return (MyComponentFramework_1.h("div", { id: guid, style: "display: flex; flex-direction: column;" },
+        MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "Count", value: getCount().toString() }),
+        MyComponentFramework_1.h("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
+            MyComponentFramework_1.h(Button_1.Button, { label: "Increase amount", onClick: clickAdd }),
+            MyComponentFramework_1.h(Button_1.Button, { label: "Decrease amount", onClick: clickSub })),
+        MyComponentFramework_1.h(LabelValue_1.LabelValue, { label: "Fruit", value: getFruit() }),
+        MyComponentFramework_1.h("div", { style: "display: flex; justify-content: space-around; padding: 20px;" },
+            MyComponentFramework_1.h(Button_1.Button, { label: "Set Apple", onClick: () => setFruit("Apple") }),
+            MyComponentFramework_1.h(Button_1.Button, { label: "Set Cherry", onClick: () => setFruit("Cherry") }),
+            MyComponentFramework_1.h(Button_1.Button, { label: "Set Pear", onClick: () => setFruit("Pear") }))));
 };
 
 },{"./AutoCounter":2,"./Button":3,"./LabelValue":4,"./MyComponentFramework":6,"uuid":7}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.render = exports.useState = exports.h = exports.createElement = exports.createObserver = void 0;
+exports.render = exports.MyStateHandler = exports.h = exports.createElement = exports.createObserver = void 0;
+const App_1 = require("./App");
 function createObserver() {
     let listeners = [];
     return {
@@ -153,23 +133,26 @@ const createElement = (node) => {
         return document.createTextNode(node);
     }
     const element = document.createElement(node.type);
-    node.children
-        .map(exports.createElement)
-        .forEach(element.appendChild.bind(element));
+    setProps(element, node.props);
+    node.children.map(exports.createElement).forEach(element.appendChild.bind(element));
     return element;
 };
 exports.createElement = createElement;
-// const setProps = (target: HTMLElement, props: Props) => {
-//   Object.entries(props || {}).forEach(([name, value]) => {
-//     if (
-//       name.startsWith("on") &&
-//       name.toLowerCase() in window &&
-//       typeof value === "function"
-//     )
-//       target.addEventListener(name.toLowerCase().substr(2), value);
-//     else target.setAttribute(name, (value as number | string).toString());
-//   });
-// };
+const setProp = (target, name, value) => {
+    if (name.startsWith("on") &&
+        name.toLowerCase() in window &&
+        typeof value === "function") {
+        target.addEventListener(name.toLowerCase().substr(2), value);
+    }
+    else {
+        target.setAttribute(name, value.toString());
+    }
+};
+const setProps = (target, props) => {
+    Object.entries(props || {}).forEach(([name, value]) => {
+        setProp(target, name, value);
+    });
+};
 const flatten = (arr) => [].concat.apply([], arr);
 const h = (type, props, ...children) => {
     props = props || {};
@@ -217,22 +200,34 @@ const patch = (parent, patches, index = 0) => {
             throw new Error("Unknown patch type");
     }
 };
-const useState = () => {
-    const observer = createObserver();
-    const subscribe = observer.subscribe;
-    const setState = (newStateValue) => {
-        observer.publish(newStateValue);
+exports.MyStateHandler = (function (Component) {
+    let hooks = [];
+    let idx = 0;
+    const useState = (initialValue) => {
+        const _idx = idx;
+        const getState = () => hooks[_idx] || initialValue;
+        const setState = (newStateValue) => {
+            hooks[_idx] = newStateValue;
+            idx = 0;
+            App_1.App();
+        };
+        idx++;
+        return [getState, setState];
     };
-    return [subscribe, setState];
-};
-exports.useState = useState;
+    return { useState };
+})(App_1.App);
 const render = (virtualNode, root) => {
     console.log(virtualNode);
-    root.appendChild(exports.createElement(virtualNode));
+    if (root.firstChild) {
+        root.replaceChild(exports.createElement(virtualNode), root.firstChild);
+    }
+    else {
+        root.appendChild(exports.createElement(virtualNode));
+    }
 };
 exports.render = render;
 
-},{}],7:[function(require,module,exports){
+},{"./App":1}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
